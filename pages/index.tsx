@@ -6,6 +6,8 @@ import {
   IconButton,
   Slide,
   Tooltip,
+  Input,
+  Center,
   useDisclosure,
   useOutsideClick,
   useTheme,
@@ -48,6 +50,7 @@ import {
   TagColors,
 } from '../components/config'
 import { ContextMenu } from '../components/contextmenu'
+import SearchBar from '../components/search'
 import Sidebar from '../components/Sidebar'
 import { Tweaks } from '../components/Tweaks'
 import { usePersistantState } from '../util/persistant-state'
@@ -154,6 +157,8 @@ export function GraphPage() {
   const graphRef = useRef<any>(null)
   const [emacsVariables, setEmacsVariables] = useState<EmacsVariables>({} as EmacsVariables)
   const clusterRef = useRef<{ [id: string]: number }>({})
+
+  const [nodeQuery, setNodeQuery] = useState([])
 
   const currentGraphDataRef = useRef<GraphData>({ nodes: [], links: [] })
 
@@ -476,6 +481,9 @@ export function GraphPage() {
             default:
               return console.error('unknown message type', message.type)
           }
+        case 'query': {
+          setNodeQuery(message.data)
+        }
       }
     })
   }, [])
@@ -722,6 +730,12 @@ export function GraphPage() {
           </div>
         )}
       </Box>
+      <SearchBar
+        websocket={WebSocketRef.current}
+        query={nodeQuery}
+        followBehavior={followBehavior}
+        setPreviewNode={setPreviewNode}
+      />
     </VariablesContext.Provider>
   )
 }
